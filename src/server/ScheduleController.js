@@ -1,7 +1,8 @@
 const Schedule = require('../database/ScheduleModel');
 
 const ScheduleController = {
-
+  
+  // Create teacher in database
   createTeacher: (req, res) => {
     const newTeacher = new Schedule.Teacher(req.body)
     
@@ -11,6 +12,7 @@ const ScheduleController = {
       res.send({teacher})
     })
   },
+  // Create a class for the current teacher in database
   createClass:(req, res, next) => {
     const newClass = new Schedule.SchoolClass({ ...req.body, teacherID: req.cookies.teacherID})
     
@@ -20,12 +22,14 @@ const ScheduleController = {
       next()
     })
   },
+  // Get all of a teacher's current classes
   getClasses: (req, res) => {
     Schedule.SchoolClass.find({ teacherID: req.cookies.teacherID }, (err, classes) => {
       if (err) throw err;
       res.send({classes})
     })
   },
+  // Add a class to the teacher collection for the current teacher
   addTeacherClass: (req, res) => {
     Schedule.Teacher.findOne({ _id: req.cookies.teacherID }, (err, teacher) => {
       if (err) throw err;
@@ -39,12 +43,14 @@ const ScheduleController = {
       })
     })
   },
+  // delete a class from the class collection
   deleteClass: (req, res, next) => {
     Schedule.SchoolClass.deleteOne({ _id: req.body.classID }, (err) => {
       if (err) throw err;
       next()
     })
   },
+  // delet class from the current teacher's schedule
   deleteTeacherClass: (req, res) => {
     Schedule.Teacher.findOne({ _id: req.cookies.teacherID }, (err, teacher) => {
       const updatedClasses = teacher.classes.filter(classID => classID !== req.body.classID)
@@ -56,6 +62,7 @@ const ScheduleController = {
       })
     })
   },
+  // update a classes information like subject, day or time
   updateClass: (req, res) => {
     Schedule.SchoolClass.findOne({ _id: req.body.classID }, (err, currClass) => {
       currClass.subject = req.body.subject;
