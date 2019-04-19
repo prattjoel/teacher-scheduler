@@ -4,7 +4,7 @@ const ScheduleController = {
   getSchedule: (req, res) => {
     console.log('getting schedule');
     // res.send({ get: 'gotten' })
-    Schedule.findOne({ teacherName: "test name" }, (err, schedule) => {
+    Schedule.findOne({ teacherName: req.params.name }, (err, schedule) => {
       if (err) throw err;
       console.log({schedule});
       res.send({schedule})
