@@ -114,8 +114,8 @@ class App extends Component {
     return (
       <div>
         <button onClick={this.getClasses}> Get Classes </button>
-        <button onClick={this.postSchedule}> create schedule </button>
-        <button onClick={this.postTeacher}> create teacher </button>
+        <button onClick={this.postSchedule}> Create Schedule </button>
+        <button onClick={this.postTeacher}> Create Teacher </button>
         name <input type='text' onChange={this.nameChange}/>
         {scheduleItems}
       </div>
