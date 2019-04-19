@@ -7,7 +7,8 @@ class App extends Component {
     super(props)
     this.state = {
       days: 5,
-      name: ''
+      name: '',
+      teacherID: ''
     }
   }
   getSchedule = () => {
@@ -16,31 +17,81 @@ class App extends Component {
       return res.json();
     }).then(jsonRes => {
       console.log({jsonRes});
+      
     }).catch(err => {
       console.log({err});
     })
     console.log(this.state);
   }
   
-  postSchedule = () => {
-    const scheduleDays = [];
-    const updatedState = {...this.state}
-    for (let i=0; i<this.state.days; i++){
-      scheduleDays.push(this.state[i]);
-      updatedState[i] = { subject: '', time: '' };
-    }
-    this.setState(updatedState)
-    fetch('/api/schedule', {
+  // postSchedule = () => {
+  //   const scheduleDays = [];
+  //   const updatedState = {...this.state}
+  //   for (let i=0; i<this.state.days; i++){
+  //     scheduleDays.push({...this.state[i], day: i, teacherID: this.state.teacherID });
+  //     updatedState[i] = { subject: '', time: '' };
+  //   }
+  //   this.setState(updatedState)
+  //   fetch('/api/schedule', {
+  //     method: 'POST',
+  //     headers: {
+  //       "Content-Type": "application/json; charset=utf-8",
+  //     },
+  //     body: JSON.stringify({ classes: scheduleDays }),
+  //   }
+  // ).then(res => {
+  //     return res.json();
+  //   }).then(jsonRes => {
+  //     console.log({jsonRes});
+  //   }).catch(err => {
+  //     console.log({err});
+  //   })
+  // }
+  
+  postClass = (day) => {
+    // const scheduleDays = [];
+    // const updatedState = {...this.state}
+    // for (let i=0; i<this.state.days; i++){
+    //   scheduleDays.push({...this.state[i], day: i, teacherID: this.state.teacherID });
+    //   updatedState[i] = { subject: '', time: '' };
+    // }
+    // this.setState(updatedState)
+    const newClass = { newClass: {...this.state[day], day, teacherID: this.state.teacherID }}
+    console.log('posting class');
+    fetch('/api/class', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
-      body: JSON.stringify({ teacherName: this.state.name, days: scheduleDays}),
+      body: JSON.stringify(newClass),
     }
   ).then(res => {
       return res.json();
     }).then(jsonRes => {
       console.log({jsonRes});
+    }).catch(err => {
+      console.log({err});
+    })
+    
+    const updatedState = { ...this.state }
+    updatedState[day].subject = '';
+    updatedState[day].time = '';
+    this.setState(updatedState)
+  }
+  
+  postTeacher = () => {
+    fetch('/api/teacher', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({ teacherName: this.state.name, classes: []}),
+    }
+  ).then(res => {
+      return res.json();
+    }).then(jsonRes => {
+      console.log(jsonRes.teacher._id);
+      this.setState({ teacherID: jsonRes.teacher._id})
     }).catch(err => {
       console.log({err});
     })
@@ -81,7 +132,9 @@ class App extends Component {
         timeVal={this.state[i] ? this.state[i].time : ''} 
         onTimeChange={(e) => {this.timeChange(i, e)}} 
         subjectVal={this.state[i] ? this.state[i].subject : ''}
-        onSubjectChange={(e) => {this.subjectChange(i, e)}} />)
+        onSubjectChange={(e) => {this.subjectChange(i, e)}}
+        submitClass={() => {this.postClass(i)}} 
+        />)
     }
     
     return (
@@ -89,6 +142,7 @@ class App extends Component {
       Whatup world
       <button onClick={this.getSchedule}> get schedule </button>
       <button onClick={this.postSchedule}> create schedule </button>
+      <button onClick={this.postTeacher}> create teacher </button>
       name <input type='text' onChange={this.nameChange}/>
       {items}
       </div>

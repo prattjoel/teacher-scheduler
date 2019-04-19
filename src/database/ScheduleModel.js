@@ -7,11 +7,26 @@ db.once('open', function() {
   console.log("connected to mongodb");
 });
 
-const scheduleSchema = new mongoose.Schema({
+const teacherSchema = new mongoose.Schema({
   teacherName: String,
-  days: [{ subject: String, time: Date }]
+  classes: [String]
 });
 
-const Schedule = mongoose.model('Schedule', scheduleSchema);
+const classSchema = new mongoose.Schema({
+  subject: String,
+  time: Date,
+  day: Number,
+  teacherID: String,
+});
+
+const Teacher = mongoose.model('Teacher', teacherSchema);
+const Class = mongoose.model('Class', classSchema)
+
+const Schedule = {
+  Teacher,
+  Class
+}
+
+console.log({Schedule});
 
 module.exports = Schedule;
