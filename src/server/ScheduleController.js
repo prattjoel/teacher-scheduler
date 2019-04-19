@@ -1,15 +1,7 @@
 const Schedule = require('../database/ScheduleModel');
 
 const ScheduleController = {
-  getSchedule: (req, res) => {
-    console.log('getting schedule');
-    console.log('teacher', Schedule.Teacher.findOne);
-    Schedule.Teacher.findOne({ teacherName: req.params.name }, (err, schedule) => {
-      if (err) throw err;
-      console.log({schedule});
-      res.send({schedule})
-    })
-  },
+
   createTeacher: (req, res) => {
     const newTeacher = new Schedule.Teacher(req.body.teacher)
     
@@ -19,36 +11,17 @@ const ScheduleController = {
       res.send({teacher})
     })
   },
-  createSchedule: (req, res, next) => {
-    console.log('creating');
-    for (let i=0; i<req.body.classes.length; i++){
-      const newClass = new Schedule.Class(req.body.classes[i])
-      
-      newClass.save((err, classInfo) => {
-        if (err) return console.error(err);
-        console.log({classInfo});
-      })
-    }
-    next()
-    // res.send({test: 'schedule'})
-  },
   createClass:(req, res, next) => {
-    const newClass = new Schedule.Class({ ...req.body, teacherID: req.cookies.teacherID})
+    const newClass = new Schedule.SchoolClass({ ...req.body, teacherID: req.cookies.teacherID})
     
     newClass.save((err, classInfo) => {
       if (err) return console.error(err);
-      console.log({classInfo});
       res.locals.addedClass = classInfo;
       next()
-      // res.send({classInfo})
     })
   },
   getClasses: (req, res) => {
-    // console.log('teacher id', req.body.classes[0].teacherID);
-    console.log('cookies', req.cookies);
-    console.log('teacher id', req.cookies.teacherID);
-    
-    Schedule.Class.find({ teacherID: req.cookies.teacherID }, (err, classes) => {
+    Schedule.SchoolClass.find({ teacherID: req.cookies.teacherID }, (err, classes) => {
       if (err) throw err;
       res.send({classes})
     })
@@ -67,7 +40,7 @@ const ScheduleController = {
     })
   },
   deleteClass: (req, res, next) => {
-    Schedule.Class.deleteOne({ _id: req.body.classID }, (err) => {
+    Schedule.SchoolClass.deleteOne({ _id: req.body.classID }, (err) => {
       if (err) throw err;
       next()
     })
@@ -84,7 +57,7 @@ const ScheduleController = {
     })
   },
   updateClass: (req, res) => {
-    Schedule.Class.findOne({ _id: req.body.classID }, (err, currClass) => {
+    Schedule.SchoolClass.findOne({ _id: req.body.classID }, (err, currClass) => {
       currClass.subject = req.body.subject;
       currClass.time = req.body.time;
       currClass.day = req.body.day;
