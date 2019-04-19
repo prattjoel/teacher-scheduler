@@ -3,7 +3,7 @@ const Schedule = require('../database/ScheduleModel');
 const ScheduleController = {
 
   createTeacher: (req, res) => {
-    const newTeacher = new Schedule.Teacher(req.body.teacher)
+    const newTeacher = new Schedule.Teacher(req.body)
     
     newTeacher.save((err, teacher) => {
       if (err) throw err
