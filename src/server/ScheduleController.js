@@ -1,26 +1,70 @@
 const Schedule = require('../database/ScheduleModel');
 
 const ScheduleController = {
-  getSchedule: (req, res) => {
-    console.log('getting schedule');
-    // res.send({ get: 'gotten' })
-    Schedule.findOne({ teacherName: req.params.name }, (err, schedule) => {
-      if (err) throw err;
-      console.log({schedule});
-      res.send({schedule})
+
+  createTeacher: (req, res) => {
+    const newTeacher = new Schedule.Teacher(req.body)
+    
+    newTeacher.save((err, teacher) => {
+      if (err) throw err
+      res.cookie('teacherID', teacher._id)
+      res.send({teacher})
     })
   },
-  createSchedule: (req, res) => {
-    console.log('creating');
-    const schedule = new Schedule({
-      teacherName: req.body.teacherName,
-      days: req.body.days
-    })
+  createClass:(req, res, next) => {
+    const newClass = new Schedule.SchoolClass({ ...req.body, teacherID: req.cookies.teacherID})
     
-    schedule.save((err, schedule) => {
+    newClass.save((err, classInfo) => {
       if (err) return console.error(err);
-      console.log({schedule});
-      res.send({schedule})
+      res.locals.addedClass = classInfo;
+      next()
+    })
+  },
+  getClasses: (req, res) => {
+    Schedule.SchoolClass.find({ teacherID: req.cookies.teacherID }, (err, classes) => {
+      if (err) throw err;
+      res.send({classes})
+    })
+  },
+  addTeacherClass: (req, res) => {
+    Schedule.Teacher.findOne({ _id: req.cookies.teacherID }, (err, teacher) => {
+      if (err) throw err;
+      const updatedClasses = teacher.classes
+      updatedClasses.push(res.locals.addedClass._id);
+      teacher.classes = updatedClasses
+      teacher.save((err, teacherInfo) => {
+        if (err) throw err;
+        
+        res.send({ classInfo: res.locals.addedClass, teacherInfo })
+      })
+    })
+  },
+  deleteClass: (req, res, next) => {
+    Schedule.SchoolClass.deleteOne({ _id: req.body.classID }, (err) => {
+      if (err) throw err;
+      next()
+    })
+  },
+  deleteTeacherClass: (req, res) => {
+    Schedule.Teacher.findOne({ _id: req.cookies.teacherID }, (err, teacher) => {
+      const updatedClasses = teacher.classes.filter(classID => classID !== req.body.classID)
+      teacher.classes = updatedClasses;
+      teacher.save((err, teacherInfo) => {
+        if (err) throw err;
+        
+        res.send({ teacherInfo })
+      })
+    })
+  },
+  updateClass: (req, res) => {
+    Schedule.SchoolClass.findOne({ _id: req.body.classID }, (err, currClass) => {
+      currClass.subject = req.body.subject;
+      currClass.time = req.body.time;
+      currClass.day = req.body.day;
+      currClass.save((err, classInfo) => {
+        if (err) throw err;
+        res.send({classInfo})
+      })
     })
   }
 }

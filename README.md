@@ -1,68 +1,26 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Back End
+I ended up focusing mostly on the database implementation.  A schedule can be created by adding a teacher to the database and then adding classes to that teachers schedule.  Teachers and classes are stored in separate collections with teachers having a 1 to many reference to classes. 
 
-## Available Scripts
+When a class is created it is automatically assigned to the current teacher.  A class can then be updated while maintaining its reference to the appropriate teacher.  Classes can also be deleted.  Upon deletion, a class is removed from the class collection and the teachers reference to it is also removed.
 
-In the project directory, you can run:
+At any point, a teacher's schedule can be retrieved by getting all of the classes referenced by that teacher.
 
-### `npm start`
+To account for the different types of schedules (weekly, bi-weekly, 7 day etc.), I assigned each class a day value that would indicate where it fell in the schedule.  For example, each class in a bi-weekly schedule would have a day inputValue between 1-10 and each class in a 7 day schedule would have a day value between 1-7.  That way each class would have a clear place on calendar even once the schedule begins repeating.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Front End
+This was my secondary priority so I ended up running out of time before implementing everything I would have liked to implement. 
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+I enabled the ability to create teachers and classes and retrieve all classes for a teacher in the Front end but without any style UI to support it.
 
-### `npm test`
+If I had more time, I would have liked to create UI to support all of the database functionality and display schedules based on the different rotations (weekly, bi-weekly etc.).
+ 
+### Stack
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+I used Mongoose with MongoDB for the database, Express/Node.js for the server and React for the front end.  Most of the choices around the stack were to facilitate quick, simple implementations.
 
-### `npm run build`
+### Building
+- Start the server: `npm run server`
+- Run the app React: `npm start`
+- It could be helpful to use something like [Postman](https://www.getpostman.com/) to test some of the additional database functionality not supported in the front end (like deleting and updating classes).
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
