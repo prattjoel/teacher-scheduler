@@ -1,25 +1,43 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+// import './App.css';
 
 class App extends Component {
+  
+  getSchedule = () => {
+    fetch('/api/schedule').then(res => {
+      console.log({res});
+      return res.json();
+    }).then(jsonRes => {
+      console.log({jsonRes});
+    }).catch(err => {
+      console.log({err});
+    })
+  }
+  
+  postSchedule = () => {
+    fetch('/api/schedule', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({ teacherName: "name 3", days: [{ subject: 'math', time: Date.now() }]}),
+    }
+  ).then(res => {
+      // console.log({res});
+      return res.json();
+    }).then(jsonRes => {
+      console.log({jsonRes});
+    }).catch(err => {
+      console.log({err});
+    })
+  }
+  
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+      Whatup world
+      <button onClick={this.getSchedule}> get schedule </button>
+      <button onClick={this.postSchedule}> create schedule </button>
       </div>
     );
   }
